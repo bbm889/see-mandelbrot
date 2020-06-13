@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+</head>
+<body>
+  <div id="page-header" >
+    <h1>A Simple Mandelbrot Painting Implementation</h1>
+  </div>
+  <canvas id="mandelbrot-canvas" width="500" height="400"></canvas>
+  <script>
+
+    var canvas = document.getElementById('mandelbrot-canvas');
+    var ctx = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height; 
+    var id = ctx.getImageData(0, 0, width, height);
+    var pixels = id.data;
+
+    var x0;
+    var y0;
+    var x = 0.0;
+    var y = 0.0;
+    var iteration = 0;
+    var maxIteration = 512;
+    var xTemp = 0;
+    var off;
+
+    // for each pixel
+    for (var px = 0; px < width; px++) {
+      // scaled x
+      x0 = -2.5 + 3.5*px/ (width - 1); 
+      for(var py = 0; py < height; py++) {
+        y0 =  -1 + 2 * py / (height - 1); 
+        x = 0.0;
+        y = 0.0;
+        iteration = 0;
+        
+        while(x*x + y*y <= 4 && iteration < maxIteration) {
+          xTemp = x*x - y*y + x0;
+          y = 2*x*y + y0;
+          x = xTemp;
+          iteration++;
+        }
+        
+        var color = iteration % 255
+
+        // color the pixel
+        off = (py * id.width + px) * 4;
+        pixels[off] = color;
+        pixels[off+1] = color;
+        pixels[off+2] = color;
+        pixels[off+3] = 255;
+      }
+    }
+
+    ctx.putImageData(id, 0, 0);
+  </script>
+</body>
+</html>
